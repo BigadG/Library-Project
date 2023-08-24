@@ -20,7 +20,20 @@ function addBookToLibrary() {
       console.log("User inputs:", myLibrary);
     }
   }
-  addBookToLibrary(); // Start collecting user inputs
+addBookToLibrary(); // Start collecting user inputs
 
 
-  //next: link proj to github, add hover effect to buttons, finalize css
+
+const addBook = document.getElementById('add-book');
+const enterBttn = document.getElementById("enter"); //enter button displayed on popup
+const popup = document.getElementById("popup");
+
+
+// Attach click event listeners to open and close popup
+addBook.addEventListener('click', () => {
+  popup.style.display = "block";
+});
+enterBttn.addEventListener('click', () => {
+  popup.style.display = "none";
+});
+  

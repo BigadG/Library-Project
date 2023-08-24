@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="header">LIBRARY</div>
-    <button class="add-book">+ Add Book</button>
+    <button id="add-book">+ Add Book</button>
     <div class="book-sect">
         <div class="book">
             <div class="title">Title</div>
@@ -18,6 +18,18 @@
             <button class="read">Read</button>
             <button class="remove">Remove</button>
         </div>
+    </div>
+    <div id="popup">
+        <p>Add new book</p>
+        <form id="userInputForm">
+            <label for="name">TITLE: </label>
+            <input type="text" id="name" name="name"><br><br>
+            <label for="name">AUTHOR: </label>
+            <input type="text" id="name" name="name"><br><br>
+            <label for="number">PAGES: </label>
+            <input type="number" id="number" name="pages"><br><br>
+            <button id='enter' class="enter" type="submit">CREATE</button>
+        </form>
     </div>
 </body>
 </html>
