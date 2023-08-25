@@ -27,13 +27,37 @@ addBookToLibrary(); // Start collecting user inputs
 const addBook = document.getElementById('add-book');
 const enterBttn = document.getElementById("enter"); //enter button displayed on popup
 const popup = document.getElementById("popup");
+const books = document.getElementById("book");
+const booksect = document.getElementById("book-sect");
+const form = document.getElementById("userInputForm");
+
 
 
 // Attach click event listeners to open and close popup
 addBook.addEventListener('click', () => {
   popup.style.display = "block";
 });
-enterBttn.addEventListener('click', () => {
+
+// Function to close the popup
+function closePopup() {
   popup.style.display = "none";
-});
+}
+
+function handleSubmit(event) {
+  event.preventDefault();
+  
+  const name = form.querySelector("#name").value;
+  const email = form.querySelector("#number").value;
+  
+  // Display form inputs on the page
+  books.innerHTML = `Name: ${name}<br>Email: ${email}`;
+  
+  // Close the popup
+  closePopup();
+}
+
+addBook.addEventListener("click", addBook);
+enterBttn.addEventListener("click", enterBttn);
+form.addEventListener("submit", handleSubmit);
+submitButton.addEventListener("click", handleSubmit);
   
