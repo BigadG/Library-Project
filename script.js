@@ -43,6 +43,8 @@ function closePopup() {
   popup.style.display = "none";
 }
 
+exit.addEventListener("click", closePopup)
+
 function handleSubmit(event) {
   event.preventDefault();
   
@@ -54,17 +56,26 @@ function handleSubmit(event) {
 
 
   // Display form inputs on the page
-  const popupTitle = document.createElement("div")
-  popupTitle.textContent = `TITLE: ${name}`
-  const popupAuthor = document.createElement("div")
-  popupAuthor.textContent = `AUTHOR: ${authors}`
-  const popupPages = document.createElement("div")
-  popupPages.textContent = `PAGES: ${number}`
+  const popupTitle = document.createElement("div");
+  popupTitle.textContent = `${name}`;
+  const popupAuthor = document.createElement("div");
+  popupAuthor.textContent = `${authors}`;
+  const popupPages = document.createElement("div");
+  popupPages.textContent = `${number}`;
+  const popupRead = document.createElement("div");
+  popupRead.textContent = 'READ';
+  popupRead.className = 'read';
+  const popupRemove = document.createElement("div");
+  popupRemove.textContent = 'REMOVE';
+  popupRemove.className = 'remove';
+
   const newBook = document.createElement("div");
   newBook.id = "book";   // Assign an id to the new div
   newBook.appendChild(popupTitle);   // Add content to the new div
   newBook.appendChild(popupAuthor);
   newBook.appendChild(popupPages);
+  newBook.appendChild(popupRead);
+  newBook.appendChild(popupRemove);
   booksect.appendChild(newBook);   // Append the new div to the parent div
   
 
@@ -75,3 +86,21 @@ enterBttn.addEventListener("click", enterBttn);
 form.addEventListener("submit", handleSubmit);
 submitButton.addEventListener("click", handleSubmit);
 exit.addEventListener("click", closePopup);
+
+
+const toggleButton = document.getElementById("read");
+// Variable to track toggle state
+let isToggled = false;
+
+// Function to handle button click
+function handleClick() {
+    if (isToggled) {
+        toggleButton.classList.add("alreadyRead");
+    } else {
+        toggleButton.classList.remove("alreadyRead");
+    }
+    isToggled = !isToggled;
+}
+
+// Attach click event listener to the button
+toggleButton.addEventListener("click", handleClick);
