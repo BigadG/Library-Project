@@ -30,7 +30,7 @@ const popup = document.getElementById("popup");
 const books = document.getElementById("book");
 const booksect = document.getElementById("book-sect");
 const form = document.getElementById("userInputForm");
-
+const exit = document.getElementById("close-popup");
 
 
 // Attach click event listeners to open and close popup
@@ -47,17 +47,31 @@ function handleSubmit(event) {
   event.preventDefault();
   
   const name = form.querySelector("#name").value;
-  const email = form.querySelector("#number").value;
-  
-  // Display form inputs on the page
-  books.innerHTML = `Name: ${name}<br>Email: ${email}`;
-  
-  // Close the popup
+  const number = form.querySelector("#number").value;
+  const authors = form.querySelector("#author").value;
+
   closePopup();
+
+
+  // Display form inputs on the page
+  const popupTitle = document.createElement("div")
+  popupTitle.textContent = `TITLE: ${name}`
+  const popupAuthor = document.createElement("div")
+  popupAuthor.textContent = `AUTHOR: ${authors}`
+  const popupPages = document.createElement("div")
+  popupPages.textContent = `PAGES: ${number}`
+  const newBook = document.createElement("div");
+  newBook.id = "book";   // Assign an id to the new div
+  newBook.appendChild(popupTitle);   // Add content to the new div
+  newBook.appendChild(popupAuthor);
+  newBook.appendChild(popupPages);
+  booksect.appendChild(newBook);   // Append the new div to the parent div
+  
+
 }
 
 addBook.addEventListener("click", addBook);
 enterBttn.addEventListener("click", enterBttn);
 form.addEventListener("submit", handleSubmit);
 submitButton.addEventListener("click", handleSubmit);
-  
+exit.addEventListener("click", closePopup);

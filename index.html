@@ -20,12 +20,15 @@
         </div>
     </div>
     <div id="popup">
-        <p>Add new book</p>
+        <div class="popup-top">
+            <p>Add new book</p>
+            <button id="close-popup">X</button>
+        </div>
         <form id="userInputForm">
             <label for="name">TITLE: </label>
             <input type="text" id="name" name="name"><br><br>
-            <label for="name">AUTHOR: </label>
-            <input type="text" id="name" name="name"><br><br>
+            <label for="author">AUTHOR: </label>
+            <input type="text" id="author" name="author"><br><br>
             <label for="number">PAGES: </label>
             <input type="number" id="number" name="pages"><br><br>
             <button id='enter' class="enter" type="submit">CREATE</button>
