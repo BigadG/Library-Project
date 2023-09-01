@@ -5,12 +5,17 @@ function bookLibrary(name, author, number, read) {
   this.author = author;
   this.number = number;
   this.read = read;
-  return this.info = `${name} by ${author}, ${number} pages, ${read}`
+  return this.info = `${name} by ${author}, ${number} pages, ${read}`;
 }
-console.log(this.info);
 
+function addBookToLibrary(name, author, number, readStatus) {
+  const newBook = new bookLibrary(name, author, number, readStatus);
+  myLibrary.push(newBook.info);
 
-
+  if (readStatus) {
+    newBook.read = true;
+  }
+}
 
 
 const addBook = document.getElementById('add-book');
@@ -36,6 +41,8 @@ function closePopup() {
 
 exit.addEventListener("click", closePopup)
 
+
+
 function handleSubmit(event) {
   event.preventDefault();
 
@@ -47,34 +54,41 @@ function handleSubmit(event) {
   const newBook = document.createElement("div");
   newBook.id = "book";
 
-  let value;
+  let bookInfo = {}; // Object to store book information
+
   for (let i = 0; i < inputs.length; i++) {
     let value = form.querySelector(`#${inputs[i]}`).value;
-
+    bookInfo[inputs[i]] = value; // Store book information in the object
+  
     const popupItem = document.createElement("div");
     popupItem.textContent = `${value}`;
     newBook.appendChild(popupItem);
-    
+  
   }
   
-  function addBookToLibrary() {
-    if (value !== null) {
-      myLibrary.push(new bookLibrary(`${inputs[0]}`,`${inputs[1]}`,`${inputs[2]}`));
-    } else {
-      console.log("User inputs:", myLibrary);
-    }
-  }
-  addBookToLibrary(); // Start collecting user inputs
-
-
 
   const popupRead = document.createElement("div");
   popupRead.textContent = "NOT READ"; // Default text content
   popupRead.className = "read"; // Apply the "read" class
+  
+  let readStatus = false;
+
   popupRead.addEventListener("click", function () {
     popupRead.classList.toggle("alreadyRead");
     popupRead.textContent = popupRead.classList.contains("alreadyRead") ? "READ" : "NOT READ";
+    readStatus = popupRead.textContent === "READ";
+    console.log("Read status:", readStatus);
+
+    if (readStatus) {
+      myLibrary.splice(-1)
+      addBookToLibrary(bookInfo.name, bookInfo.author, bookInfo.number, true);
+      console.log(myLibrary);
+    }
+
   });
+  
+  addBookToLibrary(bookInfo.name, bookInfo.author, bookInfo.number, readStatus);
+  console.log(myLibrary);
 
   const popupRemove = document.createElement("div");
   popupRemove.textContent = "REMOVE";
@@ -86,12 +100,15 @@ function handleSubmit(event) {
   newBook.appendChild(popupRead);
   newBook.appendChild(popupRemove);
   booksect.appendChild(newBook);
+  
 }
 
 addBook.addEventListener("click", addBook);
 enterBttn.addEventListener("click", enterBttn);
 form.addEventListener("submit", handleSubmit);
 exit.addEventListener("click", closePopup);
+
+
 
 
 
@@ -129,5 +146,11 @@ bookEntries.forEach(bookEntry => {
 });
 
 
-//Next: integrate original library prototype section to rest of code,
+//As of right now. When changing the read status, the most recent myLibrary instance is deleted
+//and a new one is created with the proper read status. This works perfectly if the intance being
+//updated is the most recent once created, but if it isn't, then the most recent one is the one
+//that ends up being deleted. Next: Figure out how to specifically delete the instance being updated.
+//Maybe use 'splice' method again?
+
+
 //Modify input boxes on popup so they're better displayed
