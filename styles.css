@@ -102,7 +102,7 @@ body {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 30px;
     width: 250px;
-    height: 350px;
+    height: 380px;
     background-color: #222222;
     color: #7b00ff;
     border-radius: 10px;
@@ -144,10 +144,11 @@ body {
     font-size: 30px;
     margin-right: 60px;
     margin-left: 60px;
-    margin-bottom: 25px;
 }
 
 input {
     height: 20px;
     border-radius: 5px;
+    align-self: center;
+    padding: 5px;
 }

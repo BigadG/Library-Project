@@ -1,156 +1,121 @@
-const myLibrary = [];
+const myLibrary = {};
 
-function bookLibrary(name, author, number, read) {
+function Book(name, author, number, read) {
   this.name = name;
   this.author = author;
   this.number = number;
-  this.read = read;
-  return this.info = `${name} by ${author}, ${number} pages, ${read}`;
+  this.read = read === undefined ? 'NOT READ' : read;
+  this.info = `${name} by ${author}, ${number} pages, ${this.read}`;
 }
+
+Book.prototype.updateInfo = function() {
+  this.info = `${this.name} by ${this.author}, ${this.number} pages, ${this.read}`;
+};
+
+Book.prototype.toggleReadStatus = function() {
+  this.read = this.read === 'READ' ? 'NOT READ' : 'READ';
+  this.updateInfo();
+};
 
 function addBookToLibrary(name, author, number, readStatus) {
-  const newBook = new bookLibrary(name, author, number, readStatus);
-  myLibrary.push(newBook.info);
-
-  if (readStatus) {
-    newBook.read = true;
-  }
+  const newBook = new Book(name, author, number, readStatus);
+  const key = `book_${Object.keys(myLibrary).length + 1}`;
+  myLibrary[key] = newBook;
+  return key;
 }
 
+const addBookButton = document.getElementById('add-book');
+const popup = document.getElementById('popup');
+const exitButton = document.getElementById('close-popup');
+const form = document.getElementById('userInputForm');
+const bookSection = document.getElementById('book-sect');
 
-const addBook = document.getElementById('add-book');
-const enterBttn = document.getElementById("enter"); //enter button displayed on popup
-const popup = document.getElementById("popup");
-const books = document.getElementById("book");
-const booksect = document.getElementById("book-sect");
-const form = document.getElementById("userInputForm");
-const exit = document.getElementById("close-popup");
-const remove = document.querySelector(".remove");
-
-
-
-// Attach click event listeners to open and close popup
-addBook.addEventListener('click', () => {
-  popup.style.display = "block";
+addBookButton.addEventListener('click', () => {
+  popup.style.display = 'block';
 });
 
-// Function to close the popup
 function closePopup() {
-  popup.style.display = "none";
+  popup.style.display = 'none';
 }
 
-exit.addEventListener("click", closePopup)
+exitButton.addEventListener('click', closePopup);
 
+function addReadToggle(bookElement, bookInfo) {
+  const readDiv = bookElement.querySelector('.read');
+  readDiv.addEventListener('click', function () {
+    readDiv.classList.toggle('alreadyRead');
+    const bookKey = Object.keys(myLibrary).find(key => myLibrary[key].name === bookInfo.name);
+    if (bookKey) {
+      myLibrary[bookKey].toggleReadStatus();
+      console.log('Updated Read status:', myLibrary[bookKey].read);
+    }
+  });
+}
 
+function addRemoveButton(bookElement) {
+  const removeDiv = bookElement.querySelector('.remove');
+  removeDiv.addEventListener('click', function() {
+    const bookKey = bookElement.getAttribute('data-key');
+    handleRemove(bookKey);
+    bookElement.remove();
+  });
+}
+
+function handleRemove(bookKey) {
+  if (bookKey in myLibrary) {
+    delete myLibrary[bookKey];
+    console.log(`Book removed: ${bookKey}`);
+  }
+}
 
 function handleSubmit(event) {
   event.preventDefault();
-
-  const form = event.target; // Assuming 'form' is defined somewhere
-  const inputs = ["name", "author", "number"];
-
+  const form = event.target;
+  const inputs = ['name', 'author', 'number'];
   closePopup();
+  const newBook = document.createElement('div');
+  newBook.id = 'book';
+  const bookInfo = {};
 
-  const newBook = document.createElement("div");
-  newBook.id = "book";
-
-  let bookInfo = {}; // Object to store book information
-
-  for (let i = 0; i < inputs.length; i++) {
-    let value = form.querySelector(`#${inputs[i]}`).value;
-    bookInfo[inputs[i]] = value; // Store book information in the object
-  
-    const popupItem = document.createElement("div");
-    popupItem.textContent = `${value}`;
+  for (const input of inputs) {
+    const value = form.querySelector(`#${input}`).value;
+    bookInfo[input] = value;
+    const popupItem = document.createElement('div');
+    popupItem.textContent = value;
     newBook.appendChild(popupItem);
-  
   }
+
+  const popupRead = document.createElement('div');
+  popupRead.textContent = 'NOT READ';
+  popupRead.className = 'read';
   
+  const bookKey = addBookToLibrary(bookInfo.name, bookInfo.author, bookInfo.number, bookInfo.readStatus);
+  newBook.setAttribute('data-key', bookKey);
 
-  const popupRead = document.createElement("div");
-  popupRead.textContent = "NOT READ"; // Default text content
-  popupRead.className = "read"; // Apply the "read" class
-  
-  let readStatus = false;
-
-  popupRead.addEventListener("click", function () {
-    popupRead.classList.toggle("alreadyRead");
-    popupRead.textContent = popupRead.classList.contains("alreadyRead") ? "READ" : "NOT READ";
-    readStatus = popupRead.textContent === "READ";
-    console.log("Read status:", readStatus);
-
-    if (readStatus) {
-      myLibrary.splice(-1)
-      addBookToLibrary(bookInfo.name, bookInfo.author, bookInfo.number, true);
-      console.log(myLibrary);
-    }
-
-  });
-  
-  addBookToLibrary(bookInfo.name, bookInfo.author, bookInfo.number, readStatus);
-  console.log(myLibrary);
-
-  const popupRemove = document.createElement("div");
-  popupRemove.textContent = "REMOVE";
-  popupRemove.className = "remove";
-  popupRemove.addEventListener("click", function() {
-    newBook.remove(); // Remove the parent div when "REMOVE" is clicked
-});
+  const popupRemove = document.createElement('div');
+  popupRemove.textContent = 'REMOVE';
+  popupRemove.className = 'remove';
 
   newBook.appendChild(popupRead);
   newBook.appendChild(popupRemove);
-  booksect.appendChild(newBook);
   
+  addReadToggle(newBook, bookInfo);
+  addRemoveButton(newBook);
+  
+  bookSection.appendChild(newBook);
 }
 
-addBook.addEventListener("click", addBook);
-enterBttn.addEventListener("click", enterBttn);
-form.addEventListener("submit", handleSubmit);
-exit.addEventListener("click", closePopup);
+form.addEventListener('submit', handleSubmit);
 
+// Initialize first book (or it could be a loop for multiple initial books)
+const firstBook = document.querySelector('#book');
+const firstBookInfo = {
+  name: 'Initial Book', // Replace with the actual initial book name
+  author: 'Initial Author', // Replace with the actual initial book author
+  number: '123', // Replace with the actual initial book number
+  readStatus: 'NOT READ' // Replace with the actual initial book read status
+};
 
-
-
-
-const toggleButton = document.querySelector(".read");
-let isToggled = toggleButton.classList.contains("alreadyRead");
-
-function updateButtonContent() {
-  if (isToggled) {
-    toggleButton.textContent = "READ";
-  } else {
-    toggleButton.textContent = "NOT READ";
-  }
-}
-
-function handleClick() {
-  toggleButton.classList.toggle("alreadyRead", !isToggled);
-  isToggled = !isToggled;
-  updateButtonContent();
-}
-
-toggleButton.addEventListener("click", handleClick);
-updateButtonContent(); // Set initial button text
-
-
-
-const bookEntries = document.querySelectorAll("#book");
-
-// Loop through each book entry and attach a "REMOVE" button event listener
-bookEntries.forEach(bookEntry => {
-    const removeButton = bookEntry.querySelector(".remove");
-    
-    removeButton.addEventListener("click", function() {
-        bookEntry.remove(); // Remove the parent div (book entry) when "REMOVE" is clicked
-    });
-});
-
-
-//As of right now. When changing the read status, the most recent myLibrary instance is deleted
-//and a new one is created with the proper read status. This works perfectly if the intance being
-//updated is the most recent once created, but if it isn't, then the most recent one is the one
-//that ends up being deleted. Next: Figure out how to specifically delete the instance being updated.
-//Maybe use 'splice' method again?
-
-
-//Modify input boxes on popup so they're better displayed
+firstBook.setAttribute('data-key', addBookToLibrary(firstBookInfo.name, firstBookInfo.author, firstBookInfo.number, firstBookInfo.readStatus));
+addReadToggle(firstBook, firstBookInfo);
+addRemoveButton(firstBook);
