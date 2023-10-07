@@ -120,4 +120,4 @@ const firstBookInfo = {
 
 firstBook.setAttribute('data-key', addBookToLibrary(firstBookInfo.name, firstBookInfo.author, firstBookInfo.number, firstBookInfo.readStatus));
 addReadToggle(firstBook, firstBookInfo);
-addRemoveButton(firstBook);
+addRemoveButton(firstBook); 
