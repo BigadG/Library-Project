@@ -15,6 +15,7 @@ Book.prototype.updateInfo = function() {
 Book.prototype.toggleReadStatus = function() {
   this.read = this.read === 'READ' ? 'NOT READ' : 'READ';
   this.updateInfo();
+  return this.read;
 };
 
 function addBookToLibrary(name, author, number, readStatus) {
@@ -46,8 +47,9 @@ function addReadToggle(bookElement, bookInfo) {
     readDiv.classList.toggle('alreadyRead');
     const bookKey = Object.keys(myLibrary).find(key => myLibrary[key].name === bookInfo.name);
     if (bookKey) {
-      myLibrary[bookKey].toggleReadStatus();
-      console.log('Updated Read status:', myLibrary[bookKey].read);
+      const newStatus = myLibrary[bookKey].toggleReadStatus();
+      readDiv.textContent = newStatus; // Update the button's text content here.
+      console.log('Updated Read status:', newStatus);
     }
   });
 }
@@ -89,7 +91,7 @@ function handleSubmit(event) {
   popupRead.textContent = 'NOT READ';
   popupRead.className = 'read';
   
-  const bookKey = addBookToLibrary(bookInfo.name, bookInfo.author, bookInfo.number, bookInfo.readStatus);
+  const bookKey = addBookToLibrary(bookInfo.name, bookInfo.author, bookInfo.number);
   newBook.setAttribute('data-key', bookKey);
 
   const popupRemove = document.createElement('div');
