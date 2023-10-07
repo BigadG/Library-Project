@@ -14,6 +14,7 @@ class Book {
   toggleReadStatus() {
     this.read = this.read === 'READ' ? 'NOT READ' : 'READ';
     this.updateInfo();
+    return this.read;
   }
 }
 
@@ -65,8 +66,9 @@ function addReadToggle(bookElement, bookInfo) {
     readDiv.classList.toggle('alreadyRead');
     const bookKey = myLibrary.findBookKeyByName(bookInfo.name);
     if (bookKey) {
-      myLibrary.books[bookKey].toggleReadStatus();
-      console.log('Updated Read status:', myLibrary.books[bookKey].read);
+      const newStatus = myLibrary.books[bookKey].toggleReadStatus();
+      readDiv.textContent = newStatus; // This line updates the button's text content.
+      console.log('Updated Read status:', newStatus);
     }
   });
 }
@@ -101,7 +103,7 @@ function handleSubmit(event) {
   popupRead.textContent = 'NOT READ';
   popupRead.className = 'read';
   
-  const bookKey = myLibrary.addBook(bookInfo.name, bookInfo.author, bookInfo.number, bookInfo.readStatus);
+  const bookKey = myLibrary.addBook(bookInfo.name, bookInfo.author, bookInfo.number);
   newBook.setAttribute('data-key', bookKey);
 
   const popupRemove = document.createElement('div');
