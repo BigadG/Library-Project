@@ -1,28 +1,47 @@
-const myLibrary = {};
+class Book {
+  constructor(name, author, number, read = 'NOT READ') {
+    this.name = name;
+    this.author = author;
+    this.number = number;
+    this.read = read;
+    this.updateInfo();
+  }
 
-function Book(name, author, number, read) {
-  this.name = name;
-  this.author = author;
-  this.number = number;
-  this.read = read === undefined ? 'NOT READ' : read;
-  this.info = `${name} by ${author}, ${number} pages, ${this.read}`;
+  updateInfo() {
+    this.info = `${this.name} by ${this.author}, ${this.number} pages, ${this.read}`;
+  }
+
+  toggleReadStatus() {
+    this.read = this.read === 'READ' ? 'NOT READ' : 'READ';
+    this.updateInfo();
+  }
 }
 
-Book.prototype.updateInfo = function() {
-  this.info = `${this.name} by ${this.author}, ${this.number} pages, ${this.read}`;
-};
+class Library {
+  constructor() {
+    this.books = {};
+  }
 
-Book.prototype.toggleReadStatus = function() {
-  this.read = this.read === 'READ' ? 'NOT READ' : 'READ';
-  this.updateInfo();
-};
+  addBook(name, author, number, readStatus) {
+    const newBook = new Book(name, author, number, readStatus);
+    const key = `book_${Object.keys(this.books).length + 1}`;
+    this.books[key] = newBook;
+    return key;
+  }
 
-function addBookToLibrary(name, author, number, readStatus) {
-  const newBook = new Book(name, author, number, readStatus);
-  const key = `book_${Object.keys(myLibrary).length + 1}`;
-  myLibrary[key] = newBook;
-  return key;
+  findBookKeyByName(bookName) {
+    return Object.keys(this.books).find(key => this.books[key].name === bookName);
+  }
+
+  removeBookByKey(bookKey) {
+    if (bookKey in this.books) {
+      delete this.books[bookKey];
+      console.log(`Book removed: ${bookKey}`);
+    }
+  }
 }
+
+const myLibrary = new Library();
 
 const addBookButton = document.getElementById('add-book');
 const popup = document.getElementById('popup');
@@ -44,10 +63,10 @@ function addReadToggle(bookElement, bookInfo) {
   const readDiv = bookElement.querySelector('.read');
   readDiv.addEventListener('click', function () {
     readDiv.classList.toggle('alreadyRead');
-    const bookKey = Object.keys(myLibrary).find(key => myLibrary[key].name === bookInfo.name);
+    const bookKey = myLibrary.findBookKeyByName(bookInfo.name);
     if (bookKey) {
-      myLibrary[bookKey].toggleReadStatus();
-      console.log('Updated Read status:', myLibrary[bookKey].read);
+      myLibrary.books[bookKey].toggleReadStatus();
+      console.log('Updated Read status:', myLibrary.books[bookKey].read);
     }
   });
 }
@@ -56,16 +75,9 @@ function addRemoveButton(bookElement) {
   const removeDiv = bookElement.querySelector('.remove');
   removeDiv.addEventListener('click', function() {
     const bookKey = bookElement.getAttribute('data-key');
-    handleRemove(bookKey);
+    myLibrary.removeBookByKey(bookKey);
     bookElement.remove();
   });
-}
-
-function handleRemove(bookKey) {
-  if (bookKey in myLibrary) {
-    delete myLibrary[bookKey];
-    console.log(`Book removed: ${bookKey}`);
-  }
 }
 
 function handleSubmit(event) {
@@ -89,7 +101,7 @@ function handleSubmit(event) {
   popupRead.textContent = 'NOT READ';
   popupRead.className = 'read';
   
-  const bookKey = addBookToLibrary(bookInfo.name, bookInfo.author, bookInfo.number, bookInfo.readStatus);
+  const bookKey = myLibrary.addBook(bookInfo.name, bookInfo.author, bookInfo.number, bookInfo.readStatus);
   newBook.setAttribute('data-key', bookKey);
 
   const popupRemove = document.createElement('div');
@@ -116,6 +128,6 @@ const firstBookInfo = {
   readStatus: 'NOT READ' // Replace with the actual initial book read status
 };
 
-firstBook.setAttribute('data-key', addBookToLibrary(firstBookInfo.name, firstBookInfo.author, firstBookInfo.number, firstBookInfo.readStatus));
+firstBook.setAttribute('data-key', myLibrary.addBook(firstBookInfo.name, firstBookInfo.author, firstBookInfo.number, firstBookInfo.readStatus));
 addReadToggle(firstBook, firstBookInfo);
 addRemoveButton(firstBook);
